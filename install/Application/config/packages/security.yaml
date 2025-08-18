@@ -120,6 +120,8 @@ security:
         - { path: "%sylius.security.admin_regex%/connect/google/check", role: PUBLIC_ACCESS, requires_channel: https }
         - { path: "%sylius.security.admin_regex%/connect/microsoft", role: PUBLIC_ACCESS, requires_channel: https }
         - { path: "%sylius.security.admin_regex%/connect/microsoft/check", role: PUBLIC_ACCESS, requires_channel: https }
+        - { path: "%sylius.security.admin_regex%/connect/keycloak", role: PUBLIC_ACCESS, requires_channel: https }
+        - { path: "%sylius.security.admin_regex%/connect/keycloak/check", role: PUBLIC_ACCESS, requires_channel: https }
         ###< synolia/sylius-admin-oauth-plugin ###
 
         - { path: "%sylius.security.admin_regex%/_partial", role: PUBLIC_ACCESS, ips: [127.0.0.1, ::1] }

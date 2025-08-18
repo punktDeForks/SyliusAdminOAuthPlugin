@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Synolia\SyliusAdminOauthPlugin\Factory;
 
 use League\OAuth2\Client\Provider\GoogleUser;
-use Sylius\Component\Core\Model\AdminUser;
+use Stevenmaguire\OAuth2\Client\Provider\KeycloakResourceOwner;
+use App\Entity\User\AdminUser;
 use TheNetworg\OAuth2\Client\Provider\AzureResourceOwner;
 
 final class AdminUserFactory
@@ -43,6 +44,26 @@ final class AdminUserFactory
         /** @var string|null $microsoftId */
         $microsoftId = $microsoftUser->getId();
         $user->setMicrosoftId($microsoftId);
+
+        return $user;
+    }
+
+
+    public static function createByKeycloakAccount(KeycloakResourceOwner $keycloakUser, string $locale): AdminUser
+    {
+        $user = new AdminUser();
+        $user->setEmail($keycloakUser->getEmail());
+        $user->setEmailCanonical($keycloakUser->getEmail());
+        $user->setUsername(self::setUsername($keycloakUser->getFirstName(), $keycloakUser->getLastName()));
+        $user->setFirstName($keycloakUser->getFirstname());
+        $user->setLastName($keycloakUser->getLastname());
+        $user->setLocaleCode($locale);
+        $user->setEnabled(true);
+        $user->setCreatedAt(new \DateTimeImmutable('now'));
+        $data = $keycloakUser->toArray();
+        /** @var string|null $keycloakId */
+        $keycloakId = $keycloakUser->getId();
+        $user->setKeycloakId($keycloakId);
 
         return $user;
     }

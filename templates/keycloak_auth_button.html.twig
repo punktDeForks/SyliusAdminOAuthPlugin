@@ -1,0 +1,7 @@
+{% if keycloak_client_id is not null %}
+    <div class="oAuthButtonBlock keycloakOAuth">
+        <a href="{{ path('connect_admin_keycloak') }}" class="btn btn-primary btn btn-secondary w-100 mt-3">
+            <span>Sign in with Keycloak</span>
+        </a>
+    </div>
+{% endif %}

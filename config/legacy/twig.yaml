@@ -2,3 +2,4 @@ twig:
     globals:
         google_client_id: '%env(default::SYNOLIA_ADMIN_OAUTH_GOOGLE_CLIENT_ID)%'
         microsoft_client_id: '%env(default::SYNOLIA_ADMIN_OAUTH_MICROSOFT_CLIENT_ID)%'
+        keycloak_client_id: '%env(default::SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_ID)%'

@@ -14,6 +14,9 @@ sylius_twig_hooks:
             microsoft_oauth_button:
                 template: '@SynoliaSyliusAdminOauthPlugin/microsoft_auth_button.html.twig'
                 priority: -100
+            keycloak_oauth_button:
+                template: '@SynoliaSyliusAdminOauthPlugin/keycloak_auth_button.html.twig'
+                priority: -100
         'sylius_admin.authorized_domain.index.content.header':
             breadcrumbs:
                 template: '@SyliusAdmin/shared/crud/index/content/header/breadcrumbs.html.twig'
