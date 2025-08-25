@@ -44,6 +44,8 @@
    
     SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_ID=
     SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_SECRET=
+    OAUTH_KEYCLOAK_URL=
+    OAUTH_KEYCLOAK_REALM=
     ```
 3. In your security.yaml, add the OAuth authenticator in your admin firewall and put access_control paths you need depending on wich provider you use. **They must be on top of the others** :
     ```yaml
@@ -105,6 +107,11 @@ Full documentation here :
 
 
 You can now connect to your accounts with OAuth in the admin login panel !
+
+## Event
+Using the event synolia.sylius_admin_oauth_plugin.user_validation and the method OnUserValidation, you can validate 
+the group or role of the user required for authentication.
+
 
 ## Troubleshooting
 
