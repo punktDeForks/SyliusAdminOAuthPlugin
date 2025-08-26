@@ -34,13 +34,18 @@
     ```shell
     $ composer require synolia/sylius-admin-oauth-plugin
     ```
-2. Write your Google and/or Microsoft client ID and client secret in you .env file with those keys :
+2. Write your Google, Microsoft and/or Keycloak client ID and client secret in you .env file with those keys :
     ```dotenv
     SYNOLIA_ADMIN_OAUTH_GOOGLE_CLIENT_ID=
     SYNOLIA_ADMIN_OAUTH_GOOGLE_CLIENT_SECRET=
 
     SYNOLIA_ADMIN_OAUTH_MICROSOFT_CLIENT_ID=
     SYNOLIA_ADMIN_OAUTH_MICROSOFT_CLIENT_SECRET=
+   
+    SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_ID=
+    SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_SECRET=
+    OAUTH_KEYCLOAK_URL=
+    OAUTH_KEYCLOAK_REALM=
     ```
 3. In your security.yaml, add the OAuth authenticator in your admin firewall and put access_control paths you need depending on wich provider you use. **They must be on top of the others** :
     ```yaml
@@ -56,6 +61,9 @@
    
         - { path: "%sylius.security.admin_regex%/connect/microsoft", role: PUBLIC_ACCESS, requires_channel: https }
         - { path: "%sylius.security.admin_regex%/connect/microsoft/check", role: PUBLIC_ACCESS, requires_channel: https }
+   
+        - { path: "%sylius.security.admin_regex%/connect/keycloak", role: PUBLIC_ACCESS, requires_channel: https }
+        - { path: "%sylius.security.admin_regex%/connect/keycloak/check", role: PUBLIC_ACCESS, requires_channel: https }
     ```
 
 4. Create a config/routes/synolia_oauth.yaml to configure plugin's routes and to prefix them with 'admin':
@@ -99,6 +107,11 @@ Full documentation here :
 
 
 You can now connect to your accounts with OAuth in the admin login panel !
+
+## Event
+Using the event synolia.sylius_admin_oauth_plugin.user_validation and the method OnUserValidation, you can validate 
+the group or role of the user required for authentication.
+
 
 ## Troubleshooting
 

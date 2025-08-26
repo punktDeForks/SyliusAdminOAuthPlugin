@@ -6,6 +6,7 @@ namespace Synolia\SyliusAdminOauthPlugin\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Client\Provider\GoogleUser;
+use Stevenmaguire\OAuth2\Client\Provider\KeycloakResourceOwner;
 use Sylius\Component\Core\Model\AdminUser;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Synolia\SyliusAdminOauthPlugin\Security\Resolver\DomainInformationsResolver;
@@ -20,7 +21,7 @@ final readonly class UserCreationService
     ) {
     }
 
-    public function create(AzureResourceOwner|GoogleUser $user): AdminUser
+    public function create(AzureResourceOwner|GoogleUser|KeycloakResourceOwner $user): AdminUser
     {
         $domainInformation = $this->domainInformationsResolver->getDomainInformations($user);
         $existingUser = $this->getExistingUser($domainInformation, $user);
@@ -45,7 +46,7 @@ final readonly class UserCreationService
     /**
      * @param array<string, array<string, AdminUser|string|null>> $domainInformation
      */
-    private function getExistingUser(array $domainInformation, AzureResourceOwner|GoogleUser $user): ?AdminUser
+    private function getExistingUser(array $domainInformation, AzureResourceOwner|GoogleUser|KeycloakResourceOwner $user): ?AdminUser
     {
         foreach ($domainInformation as $class => $properties) {
             if ($user instanceof $class && \is_string($properties['propertyName'])) {
@@ -60,7 +61,7 @@ final readonly class UserCreationService
     /**
      * @param array<string, array<string, AdminUser|string|null>> $domainInformation
      */
-    private function getEmailMatchingUser(array $domainInformation, AzureResourceOwner|GoogleUser $user): ?AdminUser
+    private function getEmailMatchingUser(array $domainInformation, AzureResourceOwner|GoogleUser|KeycloakResourceOwner $user): ?AdminUser
     {
         foreach ($domainInformation as $class => $properties) {
             if ($user instanceof $class) {
@@ -75,7 +76,7 @@ final readonly class UserCreationService
     /**
      * @param array<string, array<string, AdminUser|string|null>> $domainInformation
      */
-    private function registerUser(array $domainInformation, AzureResourceOwner|GoogleUser $user): ?AdminUser
+    private function registerUser(array $domainInformation, AzureResourceOwner|GoogleUser|KeycloakResourceOwner $user): ?AdminUser
     {
         $userToReturn = null;
 

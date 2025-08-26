@@ -8,8 +8,10 @@ use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use League\OAuth2\Client\Provider\GoogleUser;
 use League\OAuth2\Client\Token\AccessToken;
+use Stevenmaguire\OAuth2\Client\Provider\KeycloakResourceOwner;
 use Sylius\Component\Core\Model\AdminUser;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +24,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Synolia\SyliusAdminOauthPlugin\Entity\Domain\AuthorizedDomain;
+use Synolia\SyliusAdminOauthPlugin\Event\UserValidationEvent;
 use Synolia\SyliusAdminOauthPlugin\Factory\OauthClientFactory;
 use Synolia\SyliusAdminOauthPlugin\Model\OauthClient;
 use Synolia\SyliusAdminOauthPlugin\Repository\AuthorizedDomainRepository;
@@ -46,6 +49,9 @@ final class OauthAuthenticator extends OAuth2Authenticator
         private readonly ?string $googleClientId,
         #[Autowire(env: 'default::SYNOLIA_ADMIN_OAUTH_MICROSOFT_CLIENT_ID')]
         private readonly ?string $microsoftClientId,
+        #[Autowire(env: 'default::SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_ID')]
+        private readonly ?string $keycloakClientId,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -73,7 +79,7 @@ final class OauthAuthenticator extends OAuth2Authenticator
         /** @var AccessToken $accessToken */
         $accessToken = $this->fetchAccessToken($client);
 
-        /** @var AzureResourceOwner|GoogleUser $user */
+        /** @var AzureResourceOwner|GoogleUser|KeycloakResourceOwner $user */
         $user = $client->fetchUserFromToken($accessToken);
 
         return new SelfValidatingPassport(
@@ -138,17 +144,23 @@ final class OauthAuthenticator extends OAuth2Authenticator
             if (null !== $this->microsoftClientId) {
                 $this->oauthClient = OauthClientFactory::createMicrosoftOauthClient($this->microsoftClientId);
             }
+
+            if (null !== $this->keycloakClientId) {
+                $this->oauthClient = OauthClientFactory::createKeycloakOauthClient($this->keycloakClientId);
+            }
         }
 
         // If multiple providers are given, create corresponding client
         match ($this->provider) {
             'google' => $this->oauthClient = OauthClientFactory::createGoogleOauthClient((string) $this->googleClientId),
             'microsoft' => $this->oauthClient = OauthClientFactory::createMicrosoftOauthClient((string) $this->microsoftClientId),
+            'keycloak' => $this->oauthClient = OauthClientFactory::createKeycloakOauthClient((string) $this->keycloakClientId),
             default => '',
         };
     }
 
-    private function createOauthUserIfDomainCorrespond(AzureResourceOwner|GoogleUser $user, AuthorizedDomain $domain): ?AdminUser
+
+    private function createOauthUserIfDomainCorrespond(AzureResourceOwner|GoogleUser|KeycloakResourceOwner $user, AuthorizedDomain $domain): ?AdminUser
     {
         if (
             $user instanceof GoogleUser &&
@@ -166,6 +178,18 @@ final class OauthAuthenticator extends OAuth2Authenticator
             return $this->userCreationService->create($user);
         }
 
+        if (
+            $user instanceof KeycloakResourceOwner &&
+            null !== $user->getEmail()
+        ) {
+            $event = new UserValidationEvent($user);
+            $this->eventDispatcher->dispatch($event, UserValidationEvent::NAME);
+
+            if ($event->hasErrors()) {
+                return null;
+            }
+            return $this->userCreationService->create($user);
+        }
         return null;
     }
 

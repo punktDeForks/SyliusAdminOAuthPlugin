@@ -47,4 +47,15 @@ final class OauthClientFactory
             'synolia.sylius_admin_oauth.microsoft_authentication.authentication_failure'
         );
     }
+
+    public static function createKeycloakOauthClient(string $keycloakClientId): OauthClient
+    {
+        return self::create(
+            $keycloakClientId,
+            'keycloak',
+            'connect_admin_keycloak_check',
+            'keycloak',
+            'synolia.sylius_admin_oauth.keycloak_authentication.authentication_failure'
+        );
+    }
 }

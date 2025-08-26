@@ -15,6 +15,9 @@ trait CustomAdminUserTrait
     #[Column(name: 'microsoft_id', type: Types::STRING, nullable: true)]
     private ?string $microsoftId = null;
 
+    #[Column(name: 'keycloak_id', type: Types::STRING, nullable: true)]
+    private ?string $keycloakId = null;
+
     #[Column(name: 'hosted_domain', type: Types::STRING, nullable: true)]
     private ?string $hostedDomain = null;
 
@@ -46,5 +49,15 @@ trait CustomAdminUserTrait
     public function setMicrosoftId(?string $microsoftId): void
     {
         $this->microsoftId = $microsoftId;
+    }
+
+    public function getKeycloakId(): ?string
+    {
+        return $this->keycloakId;
+    }
+
+    public function setKeycloakId(?string $keycloakId): void
+    {
+        $this->keycloakId = $keycloakId;
     }
 }

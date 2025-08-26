@@ -9,6 +9,8 @@ synolia:
             authentication_failure: Impossible to login with Google, try again.
         microsoft_authentication:
             authentication_failure: Impossible to login with Microsoft, try again.
+        keycloak_authentication:
+            authentication_failure: Impossible to login with Keycloak, try again.    
         ui:
             authorized_domains:
                 menu_label: Oauth Domain

@@ -12,3 +12,12 @@ knpu_oauth2_client:
             client_secret: '%env(default::SYNOLIA_ADMIN_OAUTH_MICROSOFT_CLIENT_SECRET)%'
             redirect_route: 'connect_admin_microsoft_check'
             redirect_params: {}
+        keycloak:
+            type: keycloak
+            client_id: '%env(default::SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_ID)%'
+            client_secret: '%env(default::SYNOLIA_ADMIN_OAUTH_KEYCLOAK_CLIENT_SECRET)%'
+            auth_server_url: '%env(OAUTH_KEYCLOAK_URL)%'
+            realm: '%env(OAUTH_KEYCLOAK_REALM)%'
+            redirect_route: 'connect_admin_keycloak_check'
+            redirect_params: {}
+

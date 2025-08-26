@@ -12,5 +12,6 @@ final class Providers
     public array $availableProvidersAndControllers = [
         'google' => 'GoogleController',
         'microsoft' => 'MicrosoftController',
+        'keycloak' => 'KeycloakController',
     ];
 }
